@@ -45,6 +45,24 @@ const GameScreen = props => {
   const [currentGuess, setcurrentGuess] = useState(initialGuess);
   // const [rounds, setRounds] = useState(0);
   const [pastGuesses, setpastGuesses] = useState([initialGuess.toString()]);
+  const [availableDeviceWidth, setAvailableDeviceWidth] = useState(
+    Dimensions.get("window").width
+  );
+  const [availableDeviceHeight, setAvailableDeviceHeight] = useState(
+    Dimensions.get("window").height
+  );
+
+  useEffect(() => {
+    const updateLAyout = () => {
+      setAvailableDeviceWidth(Dimensions.get("window").width);
+      setAvailableDeviceHeight(Dimensions.get("window").height);
+    };
+    Dimensions.addEventListener("change", updateLAyout);
+
+    return () => {
+      Dimensions.removeEventListener("change", updateLAyout);
+    };
+  });
 
   const currentLow = useRef(1);
   const currentHigh = useRef(100);
@@ -85,17 +103,17 @@ const GameScreen = props => {
     ]);
   };
 
-  if (Dimensions.get("window").height < 500) {
+  if (availableDeviceHeight < 500) {
     return (
       <View style={styles.screen}>
         <Text>Computer`s guess:</Text>
         <View style={styles.controls}>
-          <MainButton onPress={nextGuessHandler.bind(this, "greater")}>
-            <Ionicons name="md-add" size={24} color="" white />
-          </MainButton>
-          <NumberContainer>{currentGuess}</NumberContainer>
           <MainButton onPress={nextGuessHandler.bind(this, "lower")}>
             <Ionicons name="md-remove" size={24} color="" white />
+          </MainButton>
+          <NumberContainer>{currentGuess}</NumberContainer>
+          <MainButton onPress={nextGuessHandler.bind(this, "greater")}>
+            <Ionicons name="md-add" size={24} color="" white />
           </MainButton>
         </View>
         <View style={styles.listContainer}>
